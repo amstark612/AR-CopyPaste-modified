@@ -1,6 +1,6 @@
 import Base64 from "./Base64";
 
-const URL = "http://10.0.0.103:3000";
+const URL = "http://192.168.1.30:3000";
 
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   let binary = "";
@@ -11,6 +11,11 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
 
 function ping() {
   fetch(URL + "/ping").catch((e) => console.error(e));
+}
+function keep() {
+
+  fetch(URL + "/keep").catch((e) => console.error(e));
+  //return resp;
 }
 
 async function cut(imageURI: string) {
@@ -52,6 +57,7 @@ async function paste(imageURI: string) {
 }
 
 export default {
+  keep,
   ping,
   cut,
   paste,

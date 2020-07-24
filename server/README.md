@@ -17,7 +17,6 @@ Replace `123456` by your Photoshop remote connection password.
 
 ```console
 python src/main.py \
-    --basnet_service_ip="http://X.X.X.X" \
-    --basnet_service_host="basnet-http.default.example.com" \
+    --basnet_service_ip= "http://u2net-predictor.tenant-compass.global.coreweave.com" \
     --photoshop_password 123456
 ```

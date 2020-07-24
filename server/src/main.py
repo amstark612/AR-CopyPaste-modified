@@ -11,7 +11,7 @@ import pyscreenshot
 import requests
 import logging
 import argparse
-
+from shutil import copyfile
 import ps
 
 logging.basicConfig(level=logging.INFO)
@@ -42,7 +42,14 @@ def ping():
     logging.info(f'pong: {r.status_code} {r.content}')
     return 'pong'
 
-
+# Called when a user wants to keep an image
+@app.route('/keep',methods=['GET'])
+def keep():
+    now = datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
+    copyfile('cut_current.png','IMAGES/' + now + '.png')
+    logging.info("hello")
+    return 'saved'
+    
 # The cut endpoints performs the salience detection / background removal.
 # And store a copy of the result to be pasted later.
 @app.route('/cut', methods=['POST'])
@@ -103,8 +110,8 @@ def save():
 
     # Save locally.
     logging.info(' > saving final image...')
-    now = datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
-    img_scaled.save('IMAGES/' + now + '.png')
+    img_scaled.save('cut_current.png')
+    
     # img_scaled.save('cut_current.png')
 
     # Save to buffer

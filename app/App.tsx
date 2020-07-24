@@ -5,6 +5,8 @@ import {
   Image,
   TouchableWithoutFeedback,
   StyleSheet,
+  Button,
+  Alert
 } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Camera } from "expo-camera";
@@ -14,6 +16,7 @@ import server from "./components/Server";
 
 const styles = StyleSheet.create({
   resultImgView: {
+    flexDirection: "column-reverse",
     position: "absolute",
     zIndex: 200,
     top: 0,
@@ -29,6 +32,20 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "50%",
   },
+  buttonbox: {
+    //position: "absolute",
+
+
+    display: 'flex',
+    margin: 25,
+    justifyContent: 'space-around',
+
+    flexDirection: 'row',
+    height: "10%",
+
+
+  },
+
 });
 
 interface State {
@@ -131,16 +148,21 @@ export default function App() {
 
     console.log(`Done in ${((Date.now() - start) / 1000).toFixed(3)}s`);
   }
-
+  function keep() {
+    server.keep();
+    setState({ ...state, currImgSrc: "" })
+  }
   async function onPressIn() {
-    setPressed(true);
+    if (state.currImgSrc == "") { //do nothing if stil deciding if you want to keep image or not
+      setPressed(true);
 
-    const resp = await cut();
+      const resp = await cut();
 
-    // Check if we're still pressed.
-    // if (pressed) {
-    setState({ ...state, currImgSrc: resp });
-    // }
+      // Check if we're still pressed.
+      // if (pressed) {
+      setState({ ...state, currImgSrc: resp });
+      // }
+    }
   }
 
   async function onPressOut() {
@@ -148,8 +170,9 @@ export default function App() {
     setPasting(true);
 
     if (state.currImgSrc !== "") {
-      setState({ ...state, currImgSrc: "" });
+      //setState({ ...state, currImgSrc: "" });
       setPasting(false);
+
     }
   }
 
@@ -170,6 +193,7 @@ export default function App() {
       <View
         style={{ ...StyleSheet.absoluteFillObject, backgroundColor: "black" }}
       ></View>
+
       <Camera
         style={{ flex: 1, opacity: camOpacity }}
         type={state.type}
@@ -187,21 +211,37 @@ export default function App() {
             }}
           ></View>
         </TouchableWithoutFeedback>
+
       </Camera>
 
-      {pressed && state.currImgSrc !== "" ? (
+      {state.currImgSrc !== "" ? (
         <>
-          <View pointerEvents="none" style={styles.resultImgView}>
+
+          <View pointerEvents="auto" style={styles.resultImgView}>
             <Image
               style={styles.resultImg}
               source={{ uri: state.currImgSrc }}
               resizeMode="stretch"
             />
+            <View style={styles.buttonbox}>
+              <Button
+
+                title="Keep"
+                onPress={() => keep()}
+              />
+              <Button
+                title="Retake"
+                color='#ff694f'
+                onPress={() => setState({ ...state, currImgSrc: "" })}
+              />
+            </View>
+
           </View>
         </>
       ) : null}
 
       {(pressed && state.currImgSrc === "") || pasting ? <ProgressIndicator /> : null}
+
     </View>
   );
 }
